@@ -16,9 +16,9 @@ class VocabUI:
     def setup_window(self):
         """设置窗口"""
         self.root.title("智能单词学习系统 - 听说读写全能版")
-        self.root.geometry("1000x750")
+        self.root.geometry("1100x800")
         self.root.configure(bg="#f5f5f5")
-        self.root.minsize(900, 650)
+        self.root.minsize(1000, 700)
         
     def init_data(self):
         """初始化数据"""
@@ -54,83 +54,123 @@ class VocabUI:
         header_frame.pack(fill=tk.X, pady=(0, 20))
         header_frame.columnconfigure(0, weight=1)
         
+        # 标题居中
         title_label = ttk.Label(header_frame, text="📚 智能单词学习系统 - 听说读写全能版", 
-                               font=("微软雅黑", 16, "bold"), foreground="#2c3e50")
-        title_label.grid(row=0, column=0, sticky="w")
+                               font=("微软雅黑", 18, "bold"), foreground="#2c3e50")
+        title_label.grid(row=0, column=0, columnspan=2, pady=5)
         
+        # 右侧按钮放在独立行
         right_frame = ttk.Frame(header_frame)
-        right_frame.grid(row=0, column=1, sticky="e")
+        right_frame.grid(row=1, column=0, columnspan=2, pady=5)
         
         self.phonetic_toggle_btn = ttk.Button(right_frame, text="🔊 音标:开", 
-                                             command=self.toggle_phonetic, width=10)
-        self.phonetic_toggle_btn.pack(side=tk.LEFT, padx=3)
+                                             command=self.toggle_phonetic, width=12)
+        self.phonetic_toggle_btn.pack(side=tk.LEFT, padx=5)
         
         self.theme_btn = ttk.Button(right_frame, text="🌙 暗色模式", 
-                                   command=self.toggle_theme, width=10)
-        self.theme_btn.pack(side=tk.LEFT, padx=3)
-        
-        header_frame.columnconfigure(0, weight=1)
+                                   command=self.toggle_theme, width=12)
+        self.theme_btn.pack(side=tk.LEFT, padx=5)
     
     def create_mode_selector(self):
         """创建模式选择器"""
-        mode_frame = ttk.LabelFrame(self.main_frame, text="学习模式", padding="10")
+        mode_frame = ttk.LabelFrame(self.main_frame, text="选择学习模式", padding="15")
         mode_frame.pack(fill=tk.X, pady=(0, 15))
         
+        # 让按钮居中
+        center_frame = ttk.Frame(mode_frame)
+        center_frame.pack()
+        
         modes = [
-            ("📖 学习模式", "study", "完整显示所有内容"),
-            ("👂 听力模式", "listen", "听发音猜单词"),
-            ("🗣️ 口语模式", "speak", "看中文说英文"),
-            ("📖 阅读模式", "read", "看英文理解意思"),
-            ("✏️ 默写模式", "write", "根据意思默写")
+            ("📖 学习模式", "study"),
+            ("👂 听力模式", "listen"),
+            ("🗣️ 口语模式", "speak"),
+            ("📖 阅读模式", "read"),
+            ("✏️ 默写模式", "write")
         ]
         
-        for text, mode, tip in modes:
-            btn = ttk.Button(mode_frame, text=text, 
+        for text, mode in modes:
+            btn = ttk.Button(center_frame, text=text, 
                            command=lambda m=mode: self.switch_mode(m),
                            width=14)
             btn.pack(side=tk.LEFT, padx=5)
-            
-            tip_label = ttk.Label(mode_frame, text=tip, font=("微软雅黑", 8), foreground="#7f8c8d")
-            tip_label.pack(side=tk.LEFT, padx=(0, 10))
     
     def create_word_card(self):
         """创建单词卡片"""
-        self.card_frame = ttk.LabelFrame(self.main_frame, text="学习内容", padding="25")
+        self.card_frame = ttk.LabelFrame(self.main_frame, text="学习内容", padding="20")
         self.card_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
         
-        content_frame = ttk.Frame(self.card_frame)
-        content_frame.pack(fill=tk.BOTH, expand=True)
+        # 创建居中容器
+        center_container = ttk.Frame(self.card_frame)
+        center_container.pack(expand=True, fill=tk.BOTH)
+        
+        # 使用Canvas和Scrollbar支持滚动
+        canvas_frame = ttk.Frame(center_container)
+        canvas_frame.pack(fill=tk.BOTH, expand=True)
+        
+        self.canvas = tk.Canvas(canvas_frame, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(canvas_frame, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ttk.Frame(self.canvas)
+        
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
+        
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+        
+        self.canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # 内容居中框架
+        content_frame = ttk.Frame(self.scrollable_frame)
+        content_frame.pack(expand=True, fill=tk.BOTH, pady=20)
         
         # 单词显示
         self.word_label = ttk.Label(content_frame, text="", 
-                                   font=("Arial", 32, "bold"), foreground="#2c3e50")
+                                   font=("Arial", 36, "bold"), foreground="#2c3e50", 
+                                   wraplength=800, justify="center")
         self.word_label.pack(pady=(10, 5))
         
         # 音标显示
         self.phonetic_label = ttk.Label(content_frame, text="", 
-                                       font=("Arial", 14, "italic"), foreground="#7f8c8d")
+                                       font=("Arial", 16, "italic"), foreground="#7f8c8d")
         self.phonetic_label.pack(pady=5)
         
         # 发音按钮
         self.speak_btn = ttk.Button(content_frame, text="🔊 播放发音", 
-                                   command=self.speak_current, width=12)
-        self.speak_btn.pack(pady=5)
+                                   command=self.speak_current, width=15)
+        self.speak_btn.pack(pady=10)
         
         # 中文显示
         self.chinese_label = ttk.Label(content_frame, text="", 
-                                      font=("微软雅黑", 16), foreground="#34495e")
+                                      font=("微软雅黑", 18), foreground="#34495e", 
+                                      wraplength=800, justify="center")
         self.chinese_label.pack(pady=10)
         
-        # 词根/单词意思显示
-        self.details_label = ttk.Label(content_frame, text="", 
-                                      font=("微软雅黑", 11), 
-                                      foreground="#95a5a6",
-                                      wraplength=600,
-                                      justify=tk.CENTER)
-        self.details_label.pack(pady=5)
+        # 词根/单词意思显示 - 使用醒目的颜色
+        self.details_frame = tk.Frame(content_frame, bg="#FFF8DC", relief="solid", bd=1)
+        self.details_frame.pack(pady=10, fill=tk.X, padx=50)
+        
+        self.details_label = tk.Label(self.details_frame, text="", 
+                                     font=("微软雅黑", 12, "bold"), 
+                                     fg="#8B4513",
+                                     bg="#FFF8DC",
+                                     wraplength=700,
+                                     justify=tk.CENTER,
+                                     padx=15,
+                                     pady=10)
+        self.details_label.pack(fill=tk.BOTH, expand=True)
+        
+        # 绑定窗口大小变化事件
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
         
         if not self.tts.available:
             self.speak_btn.config(state="disabled", text="🔇 语音不可用")
+    
+    def _on_canvas_configure(self, event):
+        """Canvas大小变化时更新内容宽度"""
+        self.canvas.itemconfig(1, width=event.width - 20)
     
     def create_quiz_panel(self):
         """创建默写/答题面板"""
@@ -143,7 +183,7 @@ class VocabUI:
         
         self.quiz_label = ttk.Label(input_frame, text="请输入答案:", 
                                    font=("微软雅黑", 11))
-        self.quiz_label.grid(row=0, column=0, padx=(0, 10), sticky="w")
+        self.quiz_label.grid(row=0, column=0, padx=(0, 10), sticky="e")
         
         self.quiz_entry = ttk.Entry(input_frame, font=("Arial", 12))
         self.quiz_entry.grid(row=0, column=1, padx=(0, 10), sticky="ew")
@@ -164,7 +204,7 @@ class VocabUI:
         control_frame = ttk.Frame(self.main_frame)
         control_frame.pack(fill=tk.X, pady=10)
         
-        # 文件操作
+        # 文件操作 - 居中
         file_frame = ttk.Frame(control_frame)
         file_frame.pack(pady=5)
         
@@ -177,7 +217,7 @@ class VocabUI:
         ttk.Button(file_frame, text="📝 示例词组", 
                   command=self.load_sample_phrases, width=12).pack(side=tk.LEFT, padx=3)
         
-        # 导航按钮
+        # 导航按钮 - 居中
         nav_frame = ttk.Frame(control_frame)
         nav_frame.pack(pady=5)
         
@@ -189,7 +229,7 @@ class VocabUI:
     def create_status_bar(self):
         """创建状态栏"""
         status_frame = ttk.Frame(self.main_frame)
-        status_frame.pack(fill=tk.X, side=tk.BOTTOM)
+        status_frame.pack(fill=tk.X, side=tk.BOTTOM, pady=(10, 0))
         status_frame.columnconfigure(0, weight=1)
         
         self.status_label = ttk.Label(status_frame, text="👋 欢迎使用单词学习系统", 
@@ -201,11 +241,13 @@ class VocabUI:
         self.count_label.grid(row=0, column=1, padx=10)
         
         self.progress = ttk.Progressbar(status_frame, length=150, mode='determinate')
-        self.progress.grid(row=0, column=2)
+        self.progress.grid(row=0, column=2, sticky="e")
     
     def switch_mode(self, mode):
         """切换学习模式"""
         self.mode = mode
+        # 重置发音按钮的命令
+        self.speak_btn.config(command=self.speak_current)
         self.update_display()
         
         if mode == "write":
@@ -333,22 +375,47 @@ class VocabUI:
             self.update_display()
     
     def show_details_info(self):
-        """显示详细信息（词根或单词意思）"""
+        """显示详细信息（词根或单词意思）- 使用醒目颜色"""
         word = self.vocabulary[self.current_index]
+        
+        # 显示/隐藏详细解释框架
         if word.get('is_phrase'):
             if word.get('word_meanings'):
-                self.details_label.config(text=f"📖 单词拆解: {word['word_meanings']}")
+                self.details_frame.pack(pady=10, fill=tk.X, padx=50)
+                self.details_label.config(
+                    text=f"📖 单词拆解: {word['word_meanings']}",
+                    fg="#8B4513",
+                    bg="#FFF8DC"
+                )
             else:
-                self.details_label.config(text="")
+                self.details_frame.pack_forget()
         else:
             if word.get('root_word') and word.get('root_meaning'):
-                self.details_label.config(text=f"🌱 词根: {word['root_word']} — {word['root_meaning']}")
+                self.details_frame.pack(pady=10, fill=tk.X, padx=50)
+                self.details_label.config(
+                    text=f"🌱 词根: {word['root_word']} — {word['root_meaning']}",
+                    fg="#8B4513",
+                    bg="#FFF8DC",
+                    font=("微软雅黑", 12, "bold")
+                )
             elif word.get('root_word'):
-                self.details_label.config(text=f"🌱 词根: {word['root_word']}")
+                self.details_frame.pack(pady=10, fill=tk.X, padx=50)
+                self.details_label.config(
+                    text=f"🌱 词根: {word['root_word']}",
+                    fg="#8B4513",
+                    bg="#FFF8DC",
+                    font=("微软雅黑", 12, "bold")
+                )
             elif word.get('root_meaning'):
-                self.details_label.config(text=f"🌱 词根意思: {word['root_meaning']}")
+                self.details_frame.pack(pady=10, fill=tk.X, padx=50)
+                self.details_label.config(
+                    text=f"🌱 词根意思: {word['root_meaning']}",
+                    fg="#8B4513",
+                    bg="#FFF8DC",
+                    font=("微软雅黑", 12, "bold")
+                )
             else:
-                self.details_label.config(text="")
+                self.details_frame.pack_forget()
     
     def update_display(self):
         """根据当前模式更新显示"""
@@ -358,28 +425,31 @@ class VocabUI:
         
         word = self.vocabulary[self.current_index]
         
+        # 重置发音按钮命令（防止残留）
+        self.speak_btn.config(command=self.speak_current)
+        
         if self.mode == "study":
             # 学习模式：显示所有内容
             self.word_label.config(text=word['english'], foreground="#2c3e50")
             self.phonetic_label.config(text=word['phonetic'] if self.show_phonetic else "")
             self.chinese_label.config(text=word['chinese'], foreground="#34495e")
-            self.show_details_info()
+            self.show_details_info()  # 显示词根信息
             self.speak_btn.config(text="🔊 播放发音", state="normal")
             
         elif self.mode == "listen":
             # 听力模式：隐藏所有内容
             self.word_label.config(text="🎧 ???", foreground="#8e44ad")
             self.phonetic_label.config(text="")
-            self.chinese_label.config(text="点击下方按钮听发音，猜猜是什么单词/词组", foreground="#e74c3c")
-            self.details_label.config(text="")
-            self.speak_btn.config(text="🎧 播放发音并猜词", command=self.listen_and_guess)
+            self.chinese_label.config(text="🎧 点击下方按钮听发音，然后在弹出的对话框中输入单词", foreground="#e74c3c")
+            self.details_frame.pack_forget()  # 隐藏词根
+            self.speak_btn.config(text="🎧 播放发音并猜词", command=self.listen_and_guess, state="normal")
             
         elif self.mode == "speak":
             # 口语模式：只显示中文
             self.word_label.config(text="???", foreground="#8e44ad")
             self.phonetic_label.config(text="")
             self.chinese_label.config(text=word['chinese'], foreground="#e74c3c")
-            self.details_label.config(text="🗣️ 请说出对应的英文单词/词组，然后点击播放发音对照", foreground="#27ae60")
+            self.details_frame.pack_forget()  # 隐藏词根
             self.speak_btn.config(text="🔊 播放标准发音", command=self.speak_current)
             
         elif self.mode == "read":
@@ -387,7 +457,7 @@ class VocabUI:
             self.word_label.config(text=word['english'], foreground="#2c3e50")
             self.phonetic_label.config(text=word['phonetic'] if self.show_phonetic else "")
             self.chinese_label.config(text="???", foreground="#e74c3c")
-            self.details_label.config(text="📖 请理解这个单词/词组的意思，然后点击播放发音", foreground="#27ae60")
+            self.details_frame.pack_forget()  # 隐藏词根
             self.speak_btn.config(text="🔊 播放发音", command=self.speak_current)
             
         elif self.mode == "write":
@@ -395,8 +465,7 @@ class VocabUI:
             self.word_label.config(text="✏️ 请默写", foreground="#8e44ad")
             self.phonetic_label.config(text="")
             self.chinese_label.config(text=word['chinese'], foreground="#e74c3c")
-            # 默写模式不显示词根信息
-            self.details_label.config(text="💡 根据上方中文意思默写英文单词/词组", foreground="#27ae60")
+            self.details_frame.pack_forget()  # 隐藏词根
             self.speak_btn.config(text="🔊 听发音提示", command=self.speak_current)
             self.quiz_label.config(text="请输入英文单词/词组:")
         
@@ -434,11 +503,19 @@ class VocabUI:
     
     def show_welcome(self):
         """显示欢迎界面"""
-        self.word_label.config(text="📚 单词学习系统", foreground="#2c3e50")
+        self.word_label.config(text="📚 欢迎使用单词学习系统", foreground="#2c3e50")
         self.phonetic_label.config(text="")
-        self.chinese_label.config(text="点击'导入CSV'或'示例单词'开始学习", foreground="#34495e")
-        self.details_label.config(text="支持格式:\n单词: 单词,音标,意思,词根(词根 意思)\n词组: 词组,音标,意思,单词意思", 
-                                 foreground="#95a5a6")
+        self.chinese_label.config(text="点击上方按钮导入CSV文件或加载示例开始学习", foreground="#34495e")
+        
+        # 显示格式说明
+        self.details_frame.pack(pady=10, fill=tk.X, padx=50)
+        self.details_label.config(
+            text="📖 支持格式说明\n\n单词格式: 单词,音标,意思,词根(词根 意思)\n词组格式: 词组,音标,意思,单词意思\n\n示例:\napple,/ˈæpl/,苹果,\nbeautiful,/ˈbjuːtɪfl/,美丽的,beauty 美",
+            fg="#2c3e50",
+            bg="#ECF0F1",
+            font=("微软雅黑", 11),
+            justify=tk.LEFT
+        )
         self.speak_btn.config(state="disabled")
         self.progress['value'] = 0
         self.count_label.config(text="0/0")
@@ -463,8 +540,14 @@ class VocabUI:
             self.theme_btn.config(text="☀️ 亮色模式")
             self.root.configure(bg="#2c3e50")
             self.status_label.config(foreground="#bdc3c7")
+            # 更新词根标签背景
+            self.details_label.config(bg="#3d2b1f", fg="#FFD700")
+            self.details_frame.config(bg="#3d2b1f")
         else:
             self.theme_mode = "light"
             self.theme_btn.config(text="🌙 暗色模式")
             self.root.configure(bg="#f5f5f5")
             self.status_label.config(foreground="#7f8c8d")
+            # 恢复词根标签背景
+            self.details_label.config(bg="#FFF8DC", fg="#8B4513")
+            self.details_frame.config(bg="#FFF8DC")
