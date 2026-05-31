@@ -2,6 +2,8 @@
 
 通过软件的导入csv按钮导入单词或词组的csv表格软件
 
+阅读模式如果想比对自己猜的意思和单词意思可以切换成学习模式来显示意思
+
 二.表格格式
 
 如果内容是英文，是单词、音标、意思、词根和词根的意思，这样的四列填表格，表格第一行需为标题行（输入单词、音标、意思、词根和词根的意思）
@@ -13,6 +15,8 @@
 1. Usage
    
 Import the CSV table of words or phrases into the software through the software's import CSV button.
+
+If you want to compare the meaning you guessed with the word's meaning in reading mode, you can switch to study mode to display the meaning.
 
 2. Table Format
 
