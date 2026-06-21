@@ -1,3 +1,6 @@
+**工具说明**：本项目大量代码由生成式AI编写（deepseek）。
+**免责提示**：AI生成代码无法保证无BUG、无安全漏洞，任何商用、生产部署前请自行完成代码审计；作者不承担因直接复用代码产生的业务/安全损失。
+
 一.用法
 
 通过软件的导入csv按钮导入单词或词组的csv表格软件
@@ -11,6 +14,8 @@
 如果内容是复式（英文词组、中文汉词），是复式、音标、意思、组成复式的各个单词和单词意思，例句，例句翻译，这样的形式填表格，表格第一行需为标题行（输入复式、音标、意思、组成复式的各个单词和单词意思、例句、例句翻译，这样的形式填表格）
 
 
+**Tool Description**: A large portion of the code in this project is written by generative AI (deepseek).  
+**Disclaimer**: AI-generated code cannot guarantee to be bug-free or secure. Please conduct your own code audit before any commercial or production deployment; the author is not responsible for any business or security losses caused by directly reusing the code.
 
 1. Usage
 
