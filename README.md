@@ -30,3 +30,5 @@ In reading mode, if you want to compare your guessed meaning with the actual mea
 If the content is single (English word, Chinese character), the columns should be: single, phonetic notation, meaning, morpheme (root, prefix, suffix) and morpheme meaning, example sentence, example sentence translation—in total six columns. The first row of the table should be the header row (enter single, phonetic notation, meaning, morpheme and morpheme meaning, example sentence, example sentence translation).
 
 If the content is compound (English phrase, Chinese phrase), the columns should be: compound, phonetic notation, meaning, each word that makes up the compound and its meaning, example sentence, example sentence translation. The first row of the table should be the header row (enter compound, phonetic notation, meaning, each word that makes up the compound and its meaning, example sentence, example sentence translation).
+
+Vocabulary table link: https://github.com/luminyth-a/Word-CSV-table
