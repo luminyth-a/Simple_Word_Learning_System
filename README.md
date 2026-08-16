@@ -1,5 +1,5 @@
 **工具说明**：本项目大量代码由生成式AI编写（deepseek）。
-**免责提示**：AI生成代码无法保证无BUG、无安全漏洞，任何商用、生产部署前请自行完成代码审计；作者不承担因直接复用代码产生的业务/安全损失。
+**免责提示**：AI生成代码无法保证无BUG、无安全漏洞，任何商用、生产部署前请自行完成代码审计；作者不承担因使用和复用此代码产生的任何损失。
 
 一.用法
 
@@ -9,9 +9,11 @@
 可导入这个链接里的json文件：https://github.com/luminyth-a/The-JSON-file-for-a-vocabulary-app
 
 
-**Tool Description**: A large portion of the code in this project was written by generative‑AI (DeepSeek).
+**Tool Notice**: A large portion of the code in this project is written by generative‑AI (DeepSeek).
 
-**Disclaimer**: AI‑generated code cannot be guaranteed bug‑free or free from security vulnerabilities. Complete code audit is required before any commercial or production‑environment deployment. The author shall not be liable for business losses or security hazards caused by the direct reuse of the code.
+**Disclaimer**: AI‑generated code cannot be guaranteed to be bug‑free or free from security vulnerabilities.
+Please conduct your own code audit before any commercial use or production deployment.
+The author shall not be liable for any losses arising from the use or reuse of this code.
 
 ## I. Instructions for Use
 
